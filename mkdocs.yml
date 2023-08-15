@@ -120,6 +120,7 @@ nav:
     - RootModel: api/root_model.md
     - 'Pydantic Dataclasses': api/dataclasses.md
     - TypeAdapter: api/type_adapter.md
+    - 'Function Models': api/function_model.md
     - validate_call: api/validate_call.md
     - Fields: api/fields.md
     - Config: api/config.md
