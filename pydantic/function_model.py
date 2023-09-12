@@ -5,7 +5,7 @@ from inspect import Parameter, Signature, signature
 from types import NoneType
 from typing import Any, Callable, List, Optional, Tuple, Type, TypeVar, Union
 
-from pydantic_core import InitErrorDetails, PydanticCustomError, PydanticKnownError, ValidationError
+from pydantic_core import InitErrorDetails, PydanticCustomError, PydanticKnownError, PydanticUndefined, ValidationError
 
 from pydantic import BaseModel, ConfigDict, TypeAdapter, create_model, errors
 
@@ -63,7 +63,7 @@ class FunctionModel:
 
                 params[name] = (
                     get_annotation_type(param.annotation),
-                    param.default if param.default != Parameter.empty else ...,
+                    param.default if param.default != Parameter.empty else PydanticUndefined,
                 )
                 self._parameters[name] = {
                     'positional': is_positional,
