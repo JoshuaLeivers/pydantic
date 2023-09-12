@@ -1,6 +1,5 @@
 """Provides FunctionModel, a model for validating function arguments."""
 
-from collections import OrderedDict
 from copy import deepcopy
 from inspect import Parameter, Signature, signature
 from types import NoneType
@@ -18,7 +17,7 @@ class FunctionModel:
     _model: Type[BaseModel]
     _parsed: Optional[BaseModel]
     _return: TypeAdapter
-    _parameters: OrderedDict
+    _parameters: dict
     _keyword_total: int
     _positional_total: int
 
@@ -31,13 +30,13 @@ class FunctionModel:
             function: The function that the model should encapsulate.
         """
         self.function = function
-        self._parameters = OrderedDict()
+        self._parameters = {}
         self._parsed = None
         self._keyword_total = 0
         self._positional_total = 0
 
         # Gather all parameters from the function
-        params = OrderedDict()  # In order, as params[<name>] = (type, default)
+        params = {}  # In order, as params[<name>] = (type, default)
         has_args = False
         has_kwargs = False
         sig = signature(function)
@@ -175,7 +174,7 @@ class FunctionModel:
             assert field is not None  # This should always be the case, but Python complains otherwise
             return TypeAdapter(get_annotation_type(field.annotation)).validate_python(value)
 
-    def validate_arguments(self, *args: Any, **kwargs: Any) -> Tuple[BaseModel, OrderedDict]:  # noqa: C901
+    def validate_arguments(self, *args: Any, **kwargs: Any) -> Tuple[BaseModel, dict]:  # noqa: C901
         """Validate a set of arguments against the model's parameters.
 
         Raises errors in response to invalid arguments.
