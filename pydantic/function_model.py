@@ -9,6 +9,8 @@ from pydantic_core import InitErrorDetails, PydanticCustomError, PydanticKnownEr
 
 from pydantic import BaseModel, ConfigDict, TypeAdapter, create_model, errors
 
+T = TypeVar('T')
+
 
 class FunctionModel:
     """A class for validating function arguments and calling the function with the validated arguments."""
@@ -20,8 +22,6 @@ class FunctionModel:
     _parameters: dict
     _keyword_total: int
     _positional_total: int
-
-    T = TypeVar('T')
 
     def __init__(self, function: Callable) -> None:
         """Create a new model based on the provided function.
