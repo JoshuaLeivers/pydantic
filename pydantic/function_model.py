@@ -159,11 +159,8 @@ class FunctionModel:
             }
             raise ValidationError.from_exception_data(self.__class__.__name__, [init])
 
-        if key == 'args':
-            # Values within *args are unrestricted
-            return value
-        elif key == 'kwargs':
-            # Values within **kwargs are unrestricted
+        if key in {'args', 'kwargs'}:
+            # Values within *args and **kwargs are unrestricted
             return value
         else:
             field = self._model.model_fields.get(key)
