@@ -76,11 +76,7 @@ class FunctionModel:
         self._return = TypeAdapter(ret)
 
         # Allow extra params if there is a **kwargs argument
-        config = (
-            ConfigDict(extra='allow', validate_assignment=True, validate_default=True)
-            if has_kwargs
-            else ConfigDict(extra='forbid', validate_assignment=True, validate_default=True)
-        )
+        config = ConfigDict(extra='allow' if has_kwargs else 'forbid', validate_assignment=True, validate_default=True)
 
         # Handle *args
         if has_args:
