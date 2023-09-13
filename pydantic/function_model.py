@@ -163,9 +163,7 @@ class FunctionModel:
             # Values within *args and **kwargs are unrestricted
             return value
         else:
-            field = self._model.model_fields.get(key)
-            assert field is not None  # This should always be the case, but Python complains otherwise
-            return TypeAdapter(get_annotation_type(field.annotation)).validate_python(value)
+            return TypeAdapter(get_annotation_type(self._model.model_fields[key].annotation)).validate_python(value)
 
     def validate_arguments(self, *args: Any, **kwargs: Any) -> Tuple[BaseModel, dict]:  # noqa: C901
         """Validate a set of arguments against the model's parameters.
