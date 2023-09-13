@@ -264,7 +264,7 @@ class FunctionModel:
                 param = params[key]
                 param['set_keyword'] = True if param['keyword'] else False
 
-        if len(errors) > 0:
+        if errors:
             raise ValidationError.from_exception_data(self.__class__.__name__, errors)
         else:
             return parsed, params
