@@ -231,16 +231,11 @@ class FunctionModel:
             error: Optional[InitErrorDetails] = None
             in_args = False
 
-            if pos >= len(param_keys):
+            if pos >= len(param_keys) or not self._parameters[param_keys[pos]]['positional']:
                 if has_args:
                     in_args = True
                 else:
-                    error = unexp_error  # Unknown positional parameter and *args is not present
-            elif not self._parameters[param_keys[pos]]['positional']:
-                if has_args:
-                    in_args = True
-                else:
-                    error = unexp_error  # Keyword-only parameter, so can't set via position
+                    error = unexp_error  # Unknown positional parameter - either non-existent or keyword-only
             elif param_keys[pos] in val_keys:
                 error = {
                     'type': 'multiple_argument_values',
