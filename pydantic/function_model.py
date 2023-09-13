@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, TypeAdapter, create_model, errors
 
 
 class FunctionModel:
-    """A class for validating function arguments and calling the function upon the validated arguments."""
+    """A class for validating function arguments and calling the function with the validated arguments."""
 
     function: Callable
     _model: Type[BaseModel]
