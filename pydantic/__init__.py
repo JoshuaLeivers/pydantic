@@ -25,6 +25,7 @@ from .deprecated.config import BaseConfig
 from .deprecated.tools import *
 from .errors import *
 from .fields import AliasChoices, AliasPath, Field, PrivateAttr, computed_field
+from .function_model import FunctionModel
 from .functional_serializers import PlainSerializer, SerializeAsAny, WrapSerializer, field_serializer, model_serializer
 from .functional_validators import (
     AfterValidator,
@@ -196,6 +197,8 @@ __all__ = [
     'GetCoreSchemaHandler',
     'GetJsonSchemaHandler',
     'GenerateSchema',
+    # FunctionModel
+    'FunctionModel',
 ]
 
 # A mapping of {<member name>: <module name>} defining dynamic imports

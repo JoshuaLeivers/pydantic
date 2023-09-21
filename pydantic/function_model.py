@@ -7,7 +7,10 @@ from typing import Any, Callable, List, Optional, Tuple, Type, TypeVar, Union
 
 from pydantic_core import InitErrorDetails, PydanticCustomError, PydanticKnownError, PydanticUndefined, ValidationError
 
-from pydantic import BaseModel, ConfigDict, TypeAdapter, create_model, errors
+from .config import ConfigDict
+from .errors import PydanticSchemaGenerationError
+from .main import BaseModel, create_model
+from .type_adapter import TypeAdapter
 
 T = TypeVar('T')
 
@@ -22,6 +25,7 @@ class FunctionModel:
     _parameters: dict
     _keyword_total: int
     _positional_total: int
+    _signature: Signature
 
     def __init__(self, function: Callable) -> None:
         """Create a new model based on the provided function.
@@ -39,8 +43,8 @@ class FunctionModel:
         params = {}  # In order, as params[<name>] = (type, default)
         has_args = False
         has_kwargs = False
-        sig = signature(function)
-        for name, param in sig.parameters.items():
+        self._signature = signature(function)
+        for name, param in self._signature.parameters.items():
             if name == 'args' and param.kind != Parameter.VAR_POSITIONAL:
                 raise ValueError('The name "args" can only be used for variables in the case of *args.')
             elif name == 'kwargs' and param.kind != Parameter.VAR_KEYWORD:
@@ -72,7 +76,7 @@ class FunctionModel:
                 }
 
         # Configure return value type checking
-        ret = get_annotation_type(sig.return_annotation)
+        ret = get_annotation_type(self._signature.return_annotation)
         self._return = TypeAdapter(ret)
 
         # Allow extra params if there is a **kwargs argument
@@ -269,6 +273,14 @@ class FunctionModel:
         else:
             return parsed, params
 
+    def get_signature(self) -> Signature:
+        """Returns the signature of the model's function.
+
+        Returns:
+            The signature of the model's function.
+        """
+        return self._signature
+
     def get_argument(self, pos_or_kw: Union[int, str]) -> Any:
         """Retrieve the current argument provided for a given parameter.
 
@@ -416,7 +428,7 @@ def get_annotation_type(annotation: Any, strict: bool = False) -> Type:
         try:
             TypeAdapter(annotation)
             return annotation
-        except errors.PydanticSchemaGenerationError:
+        except PydanticSchemaGenerationError:
             if strict:
                 raise PydanticCustomError('unknown_type', f'the type "{annotation}" is incompatible with Pydantic')  # type: ignore
             else:

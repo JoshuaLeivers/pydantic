@@ -6,8 +6,8 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 import pytest
 from pydantic_core import PydanticCustomError, PydanticKnownError, ValidationError
 
-from pydantic import TypeAdapter
-from pydantic.function_model import FunctionModel, get_annotation_type
+from pydantic import FunctionModel, TypeAdapter
+from pydantic.function_model import get_annotation_type
 
 # Python 3.7 does not support positional-only arguments, which this uses for testing
 if version_info <= (3, 7):  # noqa: UP036
@@ -275,6 +275,7 @@ def test_fm_init():
 
     for model in models:
         assert isinstance(model.function, Callable)  # Model's function is set
+        assert model.get_signature() == signature(model.function)
 
         # Check that all the function's parameters are properly represented in the model and metadata
         has_args = False
@@ -649,10 +650,6 @@ def test_fm_validate_parse_get_call():
         model.get_argument('args')
     with pytest.raises(PydanticCustomError):
         model.get_argument('kwargs')
-
-
-def test_fm_call():
-    ...
 
 
 def test_fm_get_parameter():
